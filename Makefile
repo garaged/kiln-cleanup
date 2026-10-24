@@ -26,7 +26,7 @@ container-test:
 	docker compose -f docker-compose.test.yml run --rm smoke
 
 container-manual-up: container-test
-	@printf '%s\n' 'Manual WordPress is ready at http://localhost:$${KILN_CLEANUP_HTTP_PORT:-8080}/wp-admin (admin / not-a-real-secret).'
+	@printf '%s\n' 'Manual WordPress is ready at http://localhost:$${KILN_MCP_TEST_PORT:-8080}/wp-admin (admin / not-a-real-secret).'
 
 release-package:
 	sh scripts/package-release.sh

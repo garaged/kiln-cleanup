@@ -15,7 +15,7 @@ services:
   wordpress:
     image: wordpress:php8.2-apache
     ports:
-      - "${KILN_CLEANUP_HTTP_PORT:-8080}:80"
+      - "${KILN_MCP_TEST_PORT:-8080}:80"
     depends_on:
       database:
         condition: service_healthy
@@ -24,7 +24,7 @@ services:
       WORDPRESS_DB_NAME: wordpress
       WORDPRESS_DB_USER: wordpress
       WORDPRESS_DB_PASSWORD: wordpress
-      KILN_CLEANUP_SITE_URL: "http://localhost:${KILN_CLEANUP_HTTP_PORT:-8080}"
+      KILN_CLEANUP_SITE_URL: "http://localhost:${KILN_MCP_TEST_PORT:-8080}"
     volumes:
       - wordpress:/var/www/html
 
@@ -41,7 +41,7 @@ services:
       WORDPRESS_DB_NAME: wordpress
       WORDPRESS_DB_USER: wordpress
       WORDPRESS_DB_PASSWORD: wordpress
-      KILN_CLEANUP_SITE_URL: "http://localhost:${KILN_CLEANUP_HTTP_PORT:-8080}"
+      KILN_CLEANUP_SITE_URL: "http://localhost:${KILN_MCP_TEST_PORT:-8080}"
     volumes:
       - wordpress:/var/www/html
       - ./:/workspace/kiln-cleanup:ro
