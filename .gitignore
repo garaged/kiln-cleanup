@@ -2,3 +2,5 @@
 /phpunit.xml
 /.phpunit.cache/
 composer.lock
+
+/dist/
