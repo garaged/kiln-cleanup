@@ -24,6 +24,7 @@ services:
       WORDPRESS_DB_NAME: wordpress
       WORDPRESS_DB_USER: wordpress
       WORDPRESS_DB_PASSWORD: wordpress
+      KILN_CLEANUP_SITE_URL: "http://localhost:${KILN_CLEANUP_HTTP_PORT:-8080}"
     volumes:
       - wordpress:/var/www/html
 
@@ -40,6 +41,7 @@ services:
       WORDPRESS_DB_NAME: wordpress
       WORDPRESS_DB_USER: wordpress
       WORDPRESS_DB_PASSWORD: wordpress
+      KILN_CLEANUP_SITE_URL: "http://localhost:${KILN_CLEANUP_HTTP_PORT:-8080}"
     volumes:
       - wordpress:/var/www/html
       - ./:/workspace/kiln-cleanup:ro

@@ -8,7 +8,7 @@ Before testing, refresh the exact branch:
     git status --short
     git rev-parse HEAD
 
-1. Run `make container-manual-up`. This provisions and leaves the test stack running at `http://localhost:8080/wp-admin`; sign in as `admin` with password `not-a-real-secret`. If port 8080 is occupied, set `KILN_CLEANUP_HTTP_PORT` before the command and use that port instead.
+1. Run `make container-manual-up`. This provisions and leaves the test stack running at `http://localhost:8080/wp-admin`; sign in as `admin` with password `not-a-real-secret`. Provisioning resets WordPress `home` and `siteurl` to that exact local URL on every run. If port 8080 is occupied, set `KILN_CLEANUP_HTTP_PORT` before the command and use that port instead.
 2. In **Tools → Kiln Cleanup Jobs**, create a job with a known registration-date filter. It must appear as `ready` with the displayed policy version and filter.
 3. Change the current policy in the policy page. Return to the existing job: its displayed snapshot version/filter must remain unchanged.
 4. Press **Run one safe scan step**. Refresh the page and note the cursor. Re-submit/refresh safely: the job must never create duplicate `(job, user)` candidates.

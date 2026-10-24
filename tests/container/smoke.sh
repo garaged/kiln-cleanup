@@ -2,7 +2,10 @@
 set -eu
 
 until wp db check --allow-root >/dev/null 2>&1; do sleep 2; done
-wp core is-installed --allow-root >/dev/null 2>&1 || wp core install --url=http://localhost --title='Kiln Cleanup Smoke' --admin_user=admin --admin_password=not-a-real-secret --admin_email=admin@example.test --skip-email --allow-root
+site_url="${KILN_CLEANUP_SITE_URL:-http://localhost:8080}"
+wp core is-installed --allow-root >/dev/null 2>&1 || wp core install --url="$site_url" --title='Kiln Cleanup Smoke' --admin_user=admin --admin_password=not-a-real-secret --admin_email=admin@example.test --skip-email --allow-root
+wp option update home "$site_url" --allow-root
+wp option update siteurl "$site_url" --allow-root
 rm -rf wp-content/plugins/kiln-cleanup
 cp -R /workspace/kiln-cleanup wp-content/plugins/kiln-cleanup
 mkdir -p wp-content/plugins/kiln-cleanup/vendor
