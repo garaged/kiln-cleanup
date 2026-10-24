@@ -22,8 +22,8 @@ This roadmap is the sequencing authority for Kiln Cleanup. Each milestone gets o
 | M3 | Merged | Local administrator policy management | Account mutation |
 | M4 | Merged | Read-only candidate review view | Candidate persistence or action |
 | M5 | Merged | Durable candidate snapshots and review jobs | Quarantine |
-| M6 | In progress | Reversible quarantine and restore | Permanent deletion |
-| M7 | Planned | Resumable background execution and CLI | Higher-risk deletion |
+| M6 | Merged | Reversible quarantine and restore | Permanent deletion |
+| M7 | In progress | Resumable background review execution and CLI | Bulk quarantine or deletion |
 | M8 | Planned | Explicit permanent deletion after grace period | Automatic deletion |
 | M9 | Planned | Prevention controls and operational hardening | Third-party dependency |
 
@@ -59,9 +59,9 @@ Add a dedicated administrator-confirmed, per-account quarantine command. Preserv
 
 **Acceptance:** quarantined accounts cannot authenticate; restore returns the exact prior state; protected accounts and non-high-confidence accounts are rejected.
 
-### M7 — Background execution and CLI
+### M7 — Background review execution and CLI
 
-Run large review/quarantine jobs in bounded batches with durable cursors, exclusive claims, pause/resume/cancel/retry, progress, and WP-CLI support. Never enqueue one task per user.
+Run large review jobs in bounded batches with durable cursors, exclusive claims, pause/resume/cancel/retry, progress, and WP-CLI support. Never enqueue one task per user. Quarantine remains a per-account, administrator-confirmed M6 operation.
 
 **Acceptance:** an interrupted 600,000-user simulation resumes without skips or duplicates and stays within configured batch limits.
 

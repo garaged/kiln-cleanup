@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace KilnCleanup;
 
+use KilnCleanup\Application\BackgroundReviewJobWorkerFactory;
 use KilnCleanup\Admin\DetectionPolicyPageController;
 use KilnCleanup\Admin\ReviewJobsPageController;
 use KilnCleanup\Admin\QuarantinePageController;
@@ -20,12 +21,24 @@ final class Plugin
     public static function boot(string $pluginFile): void
     {
         register_activation_hook($pluginFile, [self::class, 'activate']);
+        register_deactivation_hook($pluginFile, [self::class, 'deactivate']);
 
         $reviewJobs = new ReviewJobsPageController();
         $quarantine = new QuarantinePageController();
         add_action('admin_post_kiln_cleanup_review_job', [$reviewJobs, 'handlePost']);
         add_action('admin_post_kiln_cleanup_quarantine', [$quarantine, 'handlePost']);
         add_filter('wp_authenticate_user', [(new WordPressQuarantineAuthBlocker()), 'block'], 10, 1);
+        add_filter('cron_schedules', static function (array $schedules): array {
+            $schedules['kiln_cleanup_minute'] = ['interval' => 60, 'display' => __('Every minute', 'kiln-cleanup')];
+            return $schedules;
+        });
+        add_action('kiln_cleanup_run_review_jobs', static function (): void {
+            BackgroundReviewJobWorkerFactory::create()->runOne();
+        });
+
+        if (defined('WP_CLI') && WP_CLI) {
+            \WP_CLI::add_command('kiln-cleanup review-jobs', \KilnCleanup\Cli\ReviewJobsCommand::class);
+        }
 
         add_action('plugins_loaded', [DatabaseSchema::class, 'maybeUpgrade']);
 
@@ -53,5 +66,13 @@ final class Plugin
             wp_die(esc_html($issue), esc_html__('Kiln Cleanup cannot be activated', 'kiln-cleanup'));
         }
         DatabaseSchema::install();
+        if (! wp_next_scheduled('kiln_cleanup_run_review_jobs')) {
+            wp_schedule_event(time() + 60, 'kiln_cleanup_minute', 'kiln_cleanup_run_review_jobs');
+        }
+    }
+
+    public static function deactivate(): void
+    {
+        wp_clear_scheduled_hook('kiln_cleanup_run_review_jobs');
     }
 }

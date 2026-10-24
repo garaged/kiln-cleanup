@@ -6,7 +6,7 @@ namespace KilnCleanup\Infrastructure;
 
 final class DatabaseSchema
 {
-    public const VERSION = '4';
+    public const VERSION = '5';
 
     public static function maybeUpgrade(): void
     {
@@ -35,12 +35,16 @@ final class DatabaseSchema
             cursor_user_id bigint(20) unsigned NOT NULL DEFAULT 0,
             total_candidates bigint(20) unsigned NOT NULL DEFAULT 0,
             processed_candidates bigint(20) unsigned NOT NULL DEFAULT 0,
+            claim_token varchar(64) NULL,
+            claim_expires_at datetime NULL,
+            last_error varchar(255) NULL,
             created_by bigint(20) unsigned NOT NULL,
             created_at datetime NOT NULL,
             started_at datetime NULL,
             finished_at datetime NULL,
             PRIMARY KEY  (id),
-            KEY state_created_at (state, created_at)
+            KEY state_created_at (state, created_at),
+            KEY claim_expires_at (claim_expires_at)
         ) {$charsetCollate};");
 
         dbDelta("CREATE TABLE {$candidates} (

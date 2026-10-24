@@ -39,3 +39,10 @@ The Review Jobs page is administrator-only and every state-changing request carr
 - The quarantine record stores only the access state needed for restore: the original capability map and user level. It does not copy profile data, content, email, IP, or authentication secrets.
 - A quarantine removes capabilities, marks the account unavailable to the authentication hook, and destroys every session token. Restore returns the exact captured access state and invalidates sessions again.
 - No automatic, background, bulk, deletion, or content mutation capability exists in M6.
+
+## M7 background review boundary
+
+- A worker claims exactly one `ready` or `running` review job with a short durable lease before processing a single bounded scan batch.
+- Claims are compare-and-set updates and expire after interruption. The existing candidate-before-cursor ordering remains the resume guarantee.
+- WordPress Cron wakes the worker at most once per minute. WP-CLI invokes the same worker and constrains batch size/count.
+- Worker failure records a bounded error and transitions only the review job to `failed`; it never changes a WordPress account.
