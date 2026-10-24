@@ -17,7 +17,7 @@ make container-manual-up
 3. Create another review job, then run a bounded CLI batch from the WordPress container:
 
    ```sh
-   docker compose -f docker-compose.test.yml exec -u 0 wordpress wp kiln-cleanup review-jobs run --batches=1 --batch-size=25 --allow-root
+   docker compose -f docker-compose.test.yml run --rm --entrypoint=wp smoke kiln-cleanup review-jobs run --batches=1 --batch-size=25 --allow-root
    ```
 
 4. Confirm the job is running/completed and that no WordPress user, role, session, login, quarantine record, or content changed.
