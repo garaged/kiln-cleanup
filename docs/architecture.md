@@ -19,6 +19,10 @@ No classifier can directly delete an account. Permanent deletion is a separate f
 
 The WordPress user table is accessed behind a read-only repository. Its query has an ascending ID cursor, bounded page size, and typed filter input. The UI receives records only through the application service; no M1 component contains a WordPress user mutation function.
 
+## M2 detection boundary
+
+The detection engine consumes a user record and an explicit, versioned local policy. It emits a score, band, and stable reasons. Allowlist matches short-circuit all scoring. A high band only means eligible for a future quarantine review; M2 has no mutation service, queue, or action endpoint.
+
 ## Extension boundary
 
 Future detectors and activity providers may contribute reason codes through narrowly typed interfaces. They cannot override allowlists, mutate users, or grant themselves a destructive action.
