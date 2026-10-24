@@ -11,7 +11,11 @@ cp -R "$root/src" "$root/docs" "$root/openspec" "$stage/"
 cp "$root/kiln-cleanup.php" "$root/LICENSE" "$root/composer.json" "$stage/"
 (
   cd "$stage"
-  composer install --no-dev --no-interaction --prefer-dist --no-progress --optimize-autoloader
+  if command -v composer >/dev/null 2>&1; then
+    composer install --no-dev --no-interaction --prefer-dist --no-progress --optimize-autoloader
+  else
+    docker run --rm -v "$stage:/app" -w /app composer:2.8 install --no-dev --no-interaction --prefer-dist --no-progress --optimize-autoloader
+  fi
 )
 (
   cd "$root/dist"
