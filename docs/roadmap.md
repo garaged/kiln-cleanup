@@ -29,6 +29,9 @@ This roadmap is the sequencing authority for Kiln Cleanup. Each milestone gets o
 
 ## Definition of done for every milestone
 
+The operational execution protocol in [AGENTS.md](../AGENTS.md) is binding for every milestone.
+
+
 1. OpenSpec states intent, requirements, scenarios, non-goals, and acceptance.
 2. Tests prove the safety invariants and failure behavior.
 3. Architecture, threat model, validation guide, and usage documentation are updated or explicitly unchanged.
