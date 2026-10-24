@@ -4,7 +4,7 @@ A safety-first, self-hosted WordPress cleanup plugin for site owners who need to
 
 ## Status
 
-**M2 — explainable detection and review in progress.** The plugin contains no user mutation path.
+**M5 — immutable, read-only review jobs.** The plugin contains no user mutation path.
 
 ## Product principles
 
@@ -18,7 +18,7 @@ A safety-first, self-hosted WordPress cleanup plugin for site owners who need to
 
 ## Current capability
 
-Administrators can inspect users through **Tools → Kiln Cleanup** using a cursor-based page (100 users per page) and an optional exact registration-date filter. M2 adds a deterministic local scoring engine for use by the future review view; it does not change user accounts.
+Administrators can inspect users through **Tools → Kiln Cleanup** using a cursor-based page (100 users per page) and an optional exact registration-date filter. **Tools → Kiln Cleanup Jobs** creates a durable review job whose policy and filter are immutable snapshots. A job runs one bounded, idempotent scan step at a time and stores review-only candidate evidence. It does not change any account, role, session, login, or content.
 
 ## Planned account-cleanup flow
 
@@ -32,4 +32,4 @@ For a large incident, workers will use keyset pagination and compact, idempotent
     composer test
     composer lint
 
-See the [M0](openspec/specs/m0-foundation/spec.md), [M1](openspec/specs/m1-user-inventory/spec.md), and [M2](openspec/specs/m2-explainable-detection/spec.md) specifications.
+See the [M5 specification](openspec/specs/m5-review-jobs/spec.md), [manual acceptance](docs/manual-m5-review-jobs.md), and [roadmap](docs/roadmap.md).

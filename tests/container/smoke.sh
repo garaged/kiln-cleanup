@@ -2,7 +2,10 @@
 set -eu
 
 until wp db check --allow-root >/dev/null 2>&1; do sleep 2; done
-wp core is-installed --allow-root >/dev/null 2>&1 || wp core install --url=http://localhost --title='Kiln Cleanup Smoke' --admin_user=admin --admin_password=not-a-real-secret --admin_email=admin@example.test --skip-email --allow-root
+site_url="${KILN_CLEANUP_SITE_URL:-http://localhost:8080}"
+wp core is-installed --allow-root >/dev/null 2>&1 || wp core install --url="$site_url" --title='Kiln Cleanup Smoke' --admin_user=admin --admin_password=not-a-real-secret --admin_email=admin@example.test --skip-email --allow-root
+wp option update home "$site_url" --allow-root
+wp option update siteurl "$site_url" --allow-root
 rm -rf wp-content/plugins/kiln-cleanup
 cp -R /workspace/kiln-cleanup wp-content/plugins/kiln-cleanup
 mkdir -p wp-content/plugins/kiln-cleanup/vendor
@@ -16,5 +19,6 @@ spl_autoload_register(static function (string $class): void {
 PHP
 wp plugin activate kiln-cleanup --allow-root
 wp eval 'global $wpdb; foreach (["kiln_cleanup_jobs","kiln_cleanup_candidates","kiln_cleanup_audit_events"] as $table) { if ($wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $wpdb->prefix . $table)) !== $wpdb->prefix . $table) { throw new RuntimeException("Missing table: " . $table); }}' --allow-root
+wp eval 'global $wpdb; foreach (["band","policy_version"] as $column) { if ($wpdb->get_var("SHOW COLUMNS FROM {$wpdb->prefix}kiln_cleanup_candidates LIKE \"{$column}\"") !== $column) { throw new RuntimeException("Missing candidate column: " . $column); }} $codec = new \KilnCleanup\Application\ReviewJobSnapshotCodec(); $job = (new \KilnCleanup\Infrastructure\WpdbReviewJobRepository())->create($codec->policySnapshot(new \KilnCleanup\Detection\DetectionPolicy("smoke-v1")), $codec->filterSnapshot(new \KilnCleanup\Domain\InventoryFilter()), 1); if ($job->state->value !== "draft") { throw new RuntimeException("Unexpected new job state"); }' --allow-root
 wp plugin is-active kiln-cleanup --allow-root
 echo "Container smoke checks passed."

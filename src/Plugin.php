@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace KilnCleanup;
 
 use KilnCleanup\Admin\DetectionPolicyPageController;
+use KilnCleanup\Admin\ReviewJobsPageController;
 use KilnCleanup\Admin\UserInventoryPageController;
 use KilnCleanup\Infrastructure\DatabaseSchema;
 use KilnCleanup\Support\Environment;
@@ -18,6 +19,9 @@ final class Plugin
     {
         register_activation_hook($pluginFile, [self::class, 'activate']);
 
+        $reviewJobs = new ReviewJobsPageController();
+        add_action('admin_post_kiln_cleanup_review_job', [$reviewJobs, 'handlePost']);
+
         add_action('plugins_loaded', [DatabaseSchema::class, 'maybeUpgrade']);
 
         add_action('admin_init', static function (): void {
@@ -29,9 +33,10 @@ final class Plugin
             }
         });
 
-        add_action('admin_menu', static function (): void {
+        add_action('admin_menu', static function () use ($reviewJobs): void {
             (new UserInventoryPageController())->register();
             (new DetectionPolicyPageController())->register();
+            $reviewJobs->register();
         });
     }
 
