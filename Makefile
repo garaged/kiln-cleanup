@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := help
 
-.PHONY: help ci quality container-preflight container-test container-down release-package release-verify
+.PHONY: help ci quality container-preflight container-test container-manual-up container-down release-package release-verify
 
 help:
 	@printf '%s\n' \
@@ -8,6 +8,7 @@ help:
 	  'make ci                  Run all available local quality gates' \
 	  'make container-preflight Validate the WordPress container stack configuration' \
 	  'make container-test      Run the WordPress container smoke test (M1)' \
+	  'make container-manual-up Provision WordPress for browser-based manual checks (default: http://localhost:8080)' \
 	  'make container-down      Stop the WordPress container stack and remove volumes'
 
 quality:
@@ -23,6 +24,9 @@ container-preflight:
 
 container-test:
 	docker compose -f docker-compose.test.yml run --rm smoke
+
+container-manual-up: container-test
+	@printf '%s\n' 'Manual WordPress is ready at http://localhost:$${KILN_CLEANUP_HTTP_PORT:-8080}/wp-admin (admin / not-a-real-secret).'
 
 release-package:
 	sh scripts/package-release.sh

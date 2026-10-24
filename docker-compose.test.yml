@@ -14,6 +14,8 @@ services:
 
   wordpress:
     image: wordpress:php8.2-apache
+    ports:
+      - "${KILN_CLEANUP_HTTP_PORT:-8080}:80"
     depends_on:
       database:
         condition: service_healthy

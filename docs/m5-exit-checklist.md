@@ -9,6 +9,6 @@
 - [x] Automated snapshot, lifecycle, idempotence, and cursor-count tests.
 - [x] Administrator-only review-job UI with nonce-protected controls.
 - [x] Hosted CI on the exact PR head.
-- [ ] Rancher Desktop ARM64 manual acceptance.
+- [ ] Rancher Desktop ARM64 manual acceptance, using the browser-accessible `container-manual-up` target.
 
 No M5 capability may modify a WordPress user, authentication, session, role, or content.
