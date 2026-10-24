@@ -56,7 +56,7 @@ final class Plugin
             }
         });
 
-        add_action('admin_menu', static function () use ($reviewJobs): void {
+        add_action('admin_menu', static function () use ($reviewJobs, $quarantine): void {
             (new UserInventoryPageController())->register();
             (new DetectionPolicyPageController())->register();
             $reviewJobs->register();
