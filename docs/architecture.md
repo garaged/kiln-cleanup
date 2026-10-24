@@ -15,6 +15,10 @@ No classifier can directly delete an account. Permanent deletion is a separate f
 - **Audit events** are append-only and deliberately omit raw email, IP, and user-meta values.
 - Long-running work uses keyset pagination (ID > cursor), not OFFSET, and idempotent state transitions.
 
+## M1 inventory boundary
+
+The WordPress user table is accessed behind a read-only repository. Its query has an ascending ID cursor, bounded page size, and typed filter input. The UI receives records only through the application service; no M1 component contains a WordPress user mutation function.
+
 ## Extension boundary
 
 Future detectors and activity providers may contribute reason codes through narrowly typed interfaces. They cannot override allowlists, mutate users, or grant themselves a destructive action.
