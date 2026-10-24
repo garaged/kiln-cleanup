@@ -4,12 +4,13 @@ A safety-first, self-hosted WordPress cleanup plugin for site owners who need to
 
 ## Status
 
-**M1 — read-only user inventory in progress.** The plugin contains no user mutation path.
+**M2 — explainable detection and review in progress.** The plugin contains no user mutation path.
 
 ## Product principles
 
-- local administration only; no relay, telemetry, or credential store;
+- local administration only; no relay, telemetry, credential store, ML, or external reputation service;
 - explainable detection rather than opaque bot verdicts;
+- explicit allowlists take precedence over every detector;
 - review and quarantine before permanent deletion;
 - resumable background execution for large jobs;
 - redacted, auditable outcomes;
@@ -17,7 +18,7 @@ A safety-first, self-hosted WordPress cleanup plugin for site owners who need to
 
 ## Current capability
 
-Administrators can inspect users through **Tools → Kiln Cleanup** using a cursor-based page (100 users per page) and an optional exact registration-date filter. The page is intentionally read-only.
+Administrators can inspect users through **Tools → Kiln Cleanup** using a cursor-based page (100 users per page) and an optional exact registration-date filter. M2 adds a deterministic local scoring engine for use by the future review view; it does not change user accounts.
 
 ## Planned account-cleanup flow
 
@@ -31,4 +32,4 @@ For a large incident, workers will use keyset pagination and compact, idempotent
     composer test
     composer lint
 
-See [M0 specification](openspec/specs/m0-foundation/spec.md), the [M1 specification](openspec/specs/m1-user-inventory/spec.md), the [architecture](docs/architecture.md), and the [threat model](docs/threat-model.md).
+See the [M0](openspec/specs/m0-foundation/spec.md), [M1](openspec/specs/m1-user-inventory/spec.md), and [M2](openspec/specs/m2-explainable-detection/spec.md) specifications.
