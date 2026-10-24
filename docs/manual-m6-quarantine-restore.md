@@ -18,13 +18,14 @@ Open the printed local WordPress URL and sign in as `admin` / `not-a-real-secret
 
 ## Safety checks
 
-1. Create a disposable subscriber account and a high-confidence candidate through a completed M5 review job. Do not use a real account.
-2. In **Tools → Kiln Cleanup Quarantine**, verify only high-confidence candidates appear. Attempt an incorrect confirmation; verify no change occurs.
-3. Type exactly `QUARANTINE <account-id>`. Verify the account cannot authenticate in an incognito browser and any earlier session is invalidated.
-4. Verify the account's role is absent while quarantined; verify its profile and authored content remain present.
-5. Use a policy-protected account and verify quarantine is rejected with no mutation.
-6. Type exactly `RESTORE <account-id>`. Verify the original role/capabilities return, the quarantine marker is cleared, and a new login works. Existing sessions must still require a new login.
-7. Inspect `kiln_cleanup_audit_events`: quarantine and restore rows must contain IDs and the source marker only—no email, capabilities, sessions, or profile data.
+1. In **Users → Add New User**, create a disposable Subscriber. Use an email such as `m6-candidate@blocked.test`; do not use a real account.
+2. In **Tools → Kiln Cleanup Policy**, add the exact blocked domain `blocked.test` and save. This produces the high-confidence, explainable signal used only for this test.
+3. In **Tools → Kiln Cleanup Jobs**, create a review job and run one scan step. On the disposable stack it completes in one batch. Verify the job is `completed`.
+4. In **Tools → Kiln Cleanup Quarantine**, verify the disposable account appears as the eligible review candidate. Enter an incorrect confirmation first; verify no change occurs.
+5. Type exactly `QUARANTINE <account-id>`. Verify the account cannot authenticate in an incognito browser and any earlier session is invalidated.
+6. Verify the account's role is absent while quarantined; verify its profile and authored content remain present.
+7. Type exactly `RESTORE <account-id>`. Verify the original Subscriber role/capabilities return, the quarantine marker is cleared, and a new login works. Existing sessions must still require a new login.
+8. Inspect `kiln_cleanup_audit_events`: quarantine and restore rows must contain IDs and the source marker only—no email, capabilities, sessions, or profile data.
 
 When finished:
 
