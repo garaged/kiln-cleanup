@@ -4,3 +4,4 @@
 composer.lock
 
 /dist/
+.DS_Store

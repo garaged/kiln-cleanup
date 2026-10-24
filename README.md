@@ -4,7 +4,7 @@ A safety-first, self-hosted WordPress cleanup plugin for site owners who need to
 
 ## Status
 
-**M5 — immutable, read-only review jobs.** The plugin contains no user mutation path.
+**M6 — reversible, per-account quarantine and restore.** Permanent deletion, bulk action, and automatic action do not exist.
 
 ## Product principles
 
@@ -18,7 +18,9 @@ A safety-first, self-hosted WordPress cleanup plugin for site owners who need to
 
 ## Current capability
 
-Administrators can inspect users through **Tools → Kiln Cleanup** using a cursor-based page (100 users per page) and an optional exact registration-date filter. **Tools → Kiln Cleanup Jobs** creates a durable review job whose policy and filter are immutable snapshots. A job runs one bounded, idempotent scan step at a time and stores review-only candidate evidence. It does not change any account, role, session, login, or content.
+Administrators can inspect users through **Tools → Kiln Cleanup** using a cursor-based page (100 users per page) and an optional exact registration-date filter. **Tools → Kiln Cleanup Jobs** creates a durable review job whose policy and filter are immutable snapshots. A job runs one bounded, idempotent scan step at a time and stores review-only candidate evidence.
+
+**Tools → Kiln Cleanup Quarantine** provides a separate, per-account command for high-confidence review candidates. It requires a typed target-specific confirmation, re-checks the captured policy allowlist, captures the original access state, destroys sessions, blocks future authentication, and supports exact restore. It never deletes an account, content, or profile data.
 
 ## Planned account-cleanup flow
 
@@ -32,4 +34,4 @@ For a large incident, workers will use keyset pagination and compact, idempotent
     composer test
     composer lint
 
-See the [M5 specification](openspec/specs/m5-review-jobs/spec.md), [manual acceptance](docs/manual-m5-review-jobs.md), and [roadmap](docs/roadmap.md).
+See the [M6 specification](openspec/specs/m6-quarantine-restore/spec.md), [manual acceptance](docs/manual-m6-quarantine-restore.md), and [roadmap](docs/roadmap.md).
