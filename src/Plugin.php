@@ -18,6 +18,8 @@ final class Plugin
     {
         register_activation_hook($pluginFile, [self::class, 'activate']);
 
+        add_action('plugins_loaded', [DatabaseSchema::class, 'maybeUpgrade']);
+
         add_action('admin_init', static function (): void {
             $issue = Environment::compatibilityIssue(self::MINIMUM_PHP_VERSION, self::MINIMUM_WORDPRESS_VERSION);
             if ($issue !== null) {

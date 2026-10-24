@@ -1,0 +1,15 @@
+{
+  "name": "garaged/kiln-cleanup",
+  "version": "0.1.0-dev",
+  "description": "Production autoloader manifest for Kiln Cleanup.",
+  "type": "wordpress-plugin",
+  "license": "GPL-2.0-or-later",
+  "require": {
+    "php": "^8.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "KilnCleanup\\": "src/"
+    }
+  }
+}
