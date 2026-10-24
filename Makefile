@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := help
 
-.PHONY: help ci quality container-preflight container-test container-down
+.PHONY: help ci quality container-preflight container-test container-down release-package release-verify
 
 help:
 	@printf '%s\n' \
@@ -23,6 +23,12 @@ container-preflight:
 
 container-test:
 	docker compose -f docker-compose.test.yml run --rm smoke
+
+release-package:
+	sh scripts/package-release.sh
+
+release-verify:
+	sh scripts/verify-release.sh
 
 container-down:
 	docker compose -f docker-compose.test.yml down --volumes --remove-orphans
