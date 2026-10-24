@@ -18,7 +18,7 @@ spl_autoload_register(static function (string $class): void {
 });
 PHP
 wp plugin activate kiln-cleanup --allow-root
-wp eval 'global $wpdb; foreach (["kiln_cleanup_jobs","kiln_cleanup_candidates","kiln_cleanup_audit_events"] as $table) { if ($wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $wpdb->prefix . $table)) !== $wpdb->prefix . $table) { throw new RuntimeException("Missing table: " . $table); }}' --allow-root
+wp eval 'global $wpdb; foreach (["kiln_cleanup_jobs","kiln_cleanup_candidates","kiln_cleanup_audit_events","kiln_cleanup_quarantines"] as $table) { if ($wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $wpdb->prefix . $table)) !== $wpdb->prefix . $table) { throw new RuntimeException("Missing table: " . $table); }}' --allow-root
 wp eval 'global $wpdb; foreach (["band","policy_version"] as $column) { if ($wpdb->get_var("SHOW COLUMNS FROM {$wpdb->prefix}kiln_cleanup_candidates LIKE \"{$column}\"") !== $column) { throw new RuntimeException("Missing candidate column: " . $column); }} $codec = new \KilnCleanup\Application\ReviewJobSnapshotCodec(); $job = (new \KilnCleanup\Infrastructure\WpdbReviewJobRepository())->create($codec->policySnapshot(new \KilnCleanup\Detection\DetectionPolicy("smoke-v1")), $codec->filterSnapshot(new \KilnCleanup\Domain\InventoryFilter()), 1); if ($job->state->value !== "draft") { throw new RuntimeException("Unexpected new job state"); }' --allow-root
 wp plugin is-active kiln-cleanup --allow-root
 echo "Container smoke checks passed."

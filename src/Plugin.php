@@ -6,8 +6,10 @@ namespace KilnCleanup;
 
 use KilnCleanup\Admin\DetectionPolicyPageController;
 use KilnCleanup\Admin\ReviewJobsPageController;
+use KilnCleanup\Admin\QuarantinePageController;
 use KilnCleanup\Admin\UserInventoryPageController;
 use KilnCleanup\Infrastructure\DatabaseSchema;
+use KilnCleanup\Infrastructure\WordPressQuarantineAuthBlocker;
 use KilnCleanup\Support\Environment;
 
 final class Plugin
@@ -20,7 +22,10 @@ final class Plugin
         register_activation_hook($pluginFile, [self::class, 'activate']);
 
         $reviewJobs = new ReviewJobsPageController();
+        $quarantine = new QuarantinePageController();
         add_action('admin_post_kiln_cleanup_review_job', [$reviewJobs, 'handlePost']);
+        add_action('admin_post_kiln_cleanup_quarantine', [$quarantine, 'handlePost']);
+        add_filter('wp_authenticate_user', [(new WordPressQuarantineAuthBlocker()), 'block'], 10, 1);
 
         add_action('plugins_loaded', [DatabaseSchema::class, 'maybeUpgrade']);
 
@@ -37,6 +42,7 @@ final class Plugin
             (new UserInventoryPageController())->register();
             (new DetectionPolicyPageController())->register();
             $reviewJobs->register();
+            $quarantine->register();
         });
     }
 

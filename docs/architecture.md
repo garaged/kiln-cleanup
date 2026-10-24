@@ -31,3 +31,11 @@ Future detectors and activity providers may contribute reason codes through narr
 ## M5 operator boundary
 
 The Review Jobs page is administrator-only and every state-changing request carries a WordPress nonce. It exposes only create, scan-one-batch, pause, resume, and cancel. Candidate persistence and audit recording are the only writes; no M5 class invokes a WordPress user, role, authentication, session, or content mutation API.
+
+## M6 quarantine boundary
+
+- Quarantine is a per-account, administrator-confirmed command sourced only from an M5 `eligible_for_quarantine` candidate.
+- The immutable policy snapshot is re-applied immediately before mutation; a protected account is rejected even if it appeared in an earlier review result.
+- The quarantine record stores only the access state needed for restore: the original capability map and user level. It does not copy profile data, content, email, IP, or authentication secrets.
+- A quarantine removes capabilities, marks the account unavailable to the authentication hook, and destroys every session token. Restore returns the exact captured access state and invalidates sessions again.
+- No automatic, background, bulk, deletion, or content mutation capability exists in M6.

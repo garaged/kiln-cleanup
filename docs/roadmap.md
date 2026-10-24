@@ -21,8 +21,8 @@ This roadmap is the sequencing authority for Kiln Cleanup. Each milestone gets o
 | M2 | Merged | Explainable local detection engine | Persisted policy or action |
 | M3 | Merged | Local administrator policy management | Account mutation |
 | M4 | Merged | Read-only candidate review view | Candidate persistence or action |
-| M5 | In review | Durable candidate snapshots and review jobs | Quarantine |
-| M6 | Planned | Reversible quarantine and restore | Permanent deletion |
+| M5 | Merged | Durable candidate snapshots and review jobs | Quarantine |
+| M6 | In progress | Reversible quarantine and restore | Permanent deletion |
 | M7 | Planned | Resumable background execution and CLI | Higher-risk deletion |
 | M8 | Planned | Explicit permanent deletion after grace period | Automatic deletion |
 | M9 | Planned | Prevention controls and operational hardening | Third-party dependency |

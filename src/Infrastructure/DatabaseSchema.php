@@ -6,7 +6,7 @@ namespace KilnCleanup\Infrastructure;
 
 final class DatabaseSchema
 {
-    public const VERSION = '2';
+    public const VERSION = '3';
 
     public static function maybeUpgrade(): void
     {
@@ -25,6 +25,7 @@ final class DatabaseSchema
         $jobs = $wpdb->prefix . 'kiln_cleanup_jobs';
         $candidates = $wpdb->prefix . 'kiln_cleanup_candidates';
         $audit = $wpdb->prefix . 'kiln_cleanup_audit_events';
+        $quarantines = $wpdb->prefix . 'kiln_cleanup_quarantines';
 
         dbDelta("CREATE TABLE {$jobs} (
             id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
@@ -70,6 +71,23 @@ final class DatabaseSchema
             PRIMARY KEY  (id),
             KEY job_occurred_at (job_id, occurred_at),
             KEY target_occurred_at (target_user_id, occurred_at)
+        ) {$charsetCollate};");
+
+        dbDelta("CREATE TABLE {$quarantines} (
+            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            user_id bigint(20) unsigned NOT NULL,
+            source_job_id bigint(20) unsigned NOT NULL,
+            state varchar(16) NOT NULL,
+            original_capabilities longtext NOT NULL,
+            original_user_level bigint(20) NOT NULL,
+            quarantined_by bigint(20) unsigned NOT NULL,
+            quarantined_at datetime NOT NULL,
+            restored_by bigint(20) unsigned NULL,
+            restored_at datetime NULL,
+            PRIMARY KEY  (id),
+            UNIQUE KEY user_id (user_id),
+            KEY state_quarantined_at (state, quarantined_at),
+            KEY source_job_id (source_job_id)
         ) {$charsetCollate};");
 
         update_option('kiln_cleanup_schema_version', self::VERSION, false);
