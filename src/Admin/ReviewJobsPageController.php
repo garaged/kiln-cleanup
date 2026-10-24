@@ -29,7 +29,6 @@ final class ReviewJobsPageController
     public function register(): void
     {
         add_management_page(__('Kiln Cleanup Review Jobs', 'kiln-cleanup'), __('Kiln Cleanup Jobs', 'kiln-cleanup'), 'manage_options', self::PAGE, [$this, 'render']);
-        add_action('admin_post_' . self::ACTION, [$this, 'handlePost']);
     }
 
     public function handlePost(): void
@@ -105,7 +104,7 @@ final class ReviewJobsPageController
             echo '<div class="notice notice-success"><p>' . esc_html__('Review job updated.', 'kiln-cleanup') . '</p></div>';
         }
         if ($error !== '') {
-            echo '<div class="notice notice-error"><p>' . esc_html($error) . '</p></div>';
+            echo '<div class="notice notice-error"><p><strong>' . esc_html__('The review job was not created or changed.', 'kiln-cleanup') . '</strong> ' . esc_html($error) . '</p></div>';
         }
         $this->renderCreateForm();
         $this->renderJobs();
@@ -117,7 +116,7 @@ final class ReviewJobsPageController
         echo '<h2>' . esc_html__('Create review job', 'kiln-cleanup') . '</h2><form method="post" action="' . esc_url(admin_url('admin-post.php')) . '">';
         wp_nonce_field(self::ACTION);
         echo '<input type="hidden" name="action" value="' . esc_attr(self::ACTION) . '"><input type="hidden" name="operation" value="create">';
-        echo '<label for="registered_before">' . esc_html__('Registered before', 'kiln-cleanup') . '</label> <input id="registered_before" name="registered_before" type="date"> ';
+        echo '<label for="registered_before">' . esc_html__('Registered before', 'kiln-cleanup') . '</label> <input id="registered_before" name="registered_before" type="date" aria-describedby="registered_before_help"> <span id="registered_before_help" class="description">' . esc_html__('Optional. Use YYYY-MM-DD; only users registered before this UTC date are included.', 'kiln-cleanup') . '</span> ';
         submit_button(__('Create immutable review job', 'kiln-cleanup'), 'primary', 'submit', false);
         echo '</form>';
     }
