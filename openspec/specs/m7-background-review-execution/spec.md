@@ -10,7 +10,7 @@ Scale M5 review jobs without changing the M6 quarantine safety boundary.
 - A worker MUST claim one eligible review job through a durable lease before starting a batch. A concurrent worker MUST fail to claim it.
 - Claims MUST expire, so an interrupted worker can be retried. Candidate writes remain idempotent and the cursor remains optimistic.
 - A worker batch MUST remain bounded to 25–500 users. WP-CLI batch loops MUST be bounded.
-- Worker errors MUST fail the review job closed, release its claim, retain a bounded error summary, and leave candidate evidence durable.
+- Worker errors MUST fail the review job closed, release its claim, retain a bounded error summary, and leave candidate evidence durable. A cron failure MUST NOT propagate into or break a WordPress page request.
 - Cron scheduling MUST be registered on activation and removed on deactivation.
 - WP-CLI MUST expose only `wp kiln-cleanup review-jobs run`, with optional `--job`, `--batches`, and `--batch-size` bounds.
 

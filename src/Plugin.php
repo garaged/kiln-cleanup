@@ -33,7 +33,12 @@ final class Plugin
             return $schedules;
         });
         add_action('kiln_cleanup_run_review_jobs', static function (): void {
-            BackgroundReviewJobWorkerFactory::create()->runOne();
+            try {
+                BackgroundReviewJobWorkerFactory::create()->runOne();
+            } catch (\Throwable) {
+                // The worker marks its claimed job as failed. A cron fault must never break a site request.
+                error_log('Kiln Cleanup background review worker failed. Inspect the review-job status for recovery details.');
+            }
         });
 
         if (defined('WP_CLI') && WP_CLI) {
