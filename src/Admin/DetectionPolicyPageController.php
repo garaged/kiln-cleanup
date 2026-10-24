@@ -26,12 +26,14 @@ final class DetectionPolicyPageController
             check_admin_referer('kiln_cleanup_save_policy');
 
             try {
-                $repository->save(new DetectionPolicy(
+                $policy = new DetectionPolicy(
                     'm3-v1',
                     $this->ids($_POST['protected_user_ids'] ?? ''),
                     $this->lines($_POST['protected_emails'] ?? ''),
                     $this->lines($_POST['blocked_email_domains'] ?? ''),
-                ));
+                );
+                $repository->save($policy);
+                (new AuditRecorder())->recordPolicySaved($policy, get_current_user_id());
                 echo '<div class="notice notice-success"><p>' . esc_html__('Policy saved. Existing accounts were not changed.', 'kiln-cleanup') . '</p></div>';
             } catch (InvalidArgumentException $exception) {
                 echo '<div class="notice notice-error"><p>' . esc_html($exception->getMessage()) . '</p></div>';
