@@ -6,7 +6,7 @@ namespace KilnCleanup\Infrastructure;
 
 final class DatabaseSchema
 {
-    public const VERSION = '5';
+    public const VERSION = '6';
 
     public static function maybeUpgrade(): void
     {
@@ -89,10 +89,15 @@ final class DatabaseSchema
             restored_by bigint(20) unsigned NULL,
             restored_at datetime NULL,
             PRIMARY KEY  (id),
-            UNIQUE KEY user_id (user_id),
+            KEY user_id (user_id),
             KEY state_quarantined_at (state, quarantined_at),
             KEY source_job_id (source_job_id)
         ) {$charsetCollate};");
+
+        $index = $wpdb->get_row("SHOW INDEX FROM {$quarantines} WHERE Key_name = 'user_id'", ARRAY_A);
+        if (is_array($index) && (int) $index['Non_unique'] === 0) {
+            $wpdb->query("ALTER TABLE {$quarantines} DROP INDEX user_id, ADD KEY user_id (user_id)");
+        }
 
         update_option('kiln_cleanup_schema_version', self::VERSION, false);
     }

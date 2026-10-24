@@ -110,7 +110,7 @@ final class QuarantinePageController
         wp_nonce_field(self::ACTION);
         echo '<input type="hidden" name="action" value="' . esc_attr(self::ACTION) . '"><input type="hidden" name="operation" value="' . esc_attr($operation) . '"><input type="hidden" name="user_id" value="' . esc_attr((string) $userId) . '">';
         if ($jobId > 0) { echo '<input type="hidden" name="job_id" value="' . esc_attr((string) $jobId) . '">'; }
-        echo '<label class="screen-reader-text" for="confirmation-' . esc_attr($operation . '-' . $userId) . '">' . esc_html__('Required confirmation', 'kiln-cleanup') . '</label><input id="confirmation-' . esc_attr($operation . '-' . $userId) . '" name="confirmation" required placeholder="' . esc_attr($token) . '"> ';
+        echo '<label for="confirmation-' . esc_attr($operation . '-' . $userId) . '">' . esc_html(sprintf(__('Type %s exactly:', 'kiln-cleanup'), $token)) . '</label> <input id="confirmation-' . esc_attr($operation . '-' . $userId) . '" name="confirmation" required autocomplete="off" placeholder="' . esc_attr($token) . '"> ';
         submit_button(ucfirst($operation), 'secondary small', 'submit', false);
         echo '</form>';
     }

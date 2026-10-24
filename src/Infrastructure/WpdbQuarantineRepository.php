@@ -13,7 +13,7 @@ final class WpdbQuarantineRepository implements QuarantineRepository
     public function get(int $userId): ?QuarantineRecord
     {
         global $wpdb;
-        return $this->hydrate($wpdb->get_row($wpdb->prepare('SELECT * FROM ' . $wpdb->prefix . 'kiln_cleanup_quarantines WHERE user_id = %d', $userId), ARRAY_A));
+        return $this->hydrate($wpdb->get_row($wpdb->prepare('SELECT * FROM ' . $wpdb->prefix . 'kiln_cleanup_quarantines WHERE user_id = %d ORDER BY state = %s DESC, id DESC LIMIT 1', $userId, 'quarantined'), ARRAY_A));
     }
 
     public function create(int $userId, int $sourceJobId, array $originalCapabilities, int $originalUserLevel, int $actorUserId): QuarantineRecord
@@ -38,7 +38,7 @@ final class WpdbQuarantineRepository implements QuarantineRepository
     {
         global $wpdb;
         return $wpdb->query($wpdb->prepare(
-            'UPDATE ' . $wpdb->prefix . 'kiln_cleanup_quarantines SET state = %s, restored_by = %d, restored_at = %s WHERE user_id = %d AND state = %s',
+            'UPDATE ' . $wpdb->prefix . 'kiln_cleanup_quarantines SET state = %s, restored_by = %d, restored_at = %s WHERE user_id = %d AND state = %s ORDER BY id DESC LIMIT 1',
             'restored', $actorUserId, current_time('mysql', true), $userId, 'quarantined',
         )) === 1;
     }
