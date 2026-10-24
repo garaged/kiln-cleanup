@@ -1,0 +1,28 @@
+.DEFAULT_GOAL := help
+
+.PHONY: help ci quality container-preflight container-test container-down
+
+help:
+	@printf '%s\n' \
+	  'make quality             Run Composer validation, unit tests, and syntax checks' \
+	  'make ci                  Run all available local quality gates' \
+	  'make container-preflight Validate the WordPress container stack configuration' \
+	  'make container-test      Run the WordPress container smoke test (M1)' \
+	  'make container-down      Stop the WordPress container stack and remove volumes'
+
+quality:
+	composer validate --strict
+	composer install --no-interaction --prefer-dist --no-progress
+	composer test
+	composer lint
+
+ci: quality container-preflight
+
+container-preflight:
+	docker compose -f docker-compose.test.yml config --quiet
+
+container-test:
+	docker compose -f docker-compose.test.yml run --rm smoke
+
+container-down:
+	docker compose -f docker-compose.test.yml down --volumes --remove-orphans
