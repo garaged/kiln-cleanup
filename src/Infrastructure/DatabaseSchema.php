@@ -8,6 +8,13 @@ final class DatabaseSchema
 {
     public const VERSION = '1';
 
+    public static function maybeUpgrade(): void
+    {
+        if (get_option('kiln_cleanup_schema_version') !== self::VERSION) {
+            self::install();
+        }
+    }
+
     public static function install(): void
     {
         global $wpdb;
