@@ -38,6 +38,10 @@ Each scan step uses a cursor and bounded batch size. OFFSET is forbidden.
 
 Audit records contain job/candidate identifiers, rule IDs, counts, and policy digest; never raw email, IP, or user meta.
 
+### R6 — Operator controls
+
+Only administrators may create, run one bounded scan step, pause, resume, or cancel a review job. Each state-changing request requires a nonce. These controls only write review-job, candidate, and audit evidence.
+
 ## Acceptance
 
 1. Create a job from a policy/filter snapshot.

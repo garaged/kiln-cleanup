@@ -28,7 +28,20 @@ final class WpdbReviewJobRepository implements ReviewJobRepository
     public function get(int $jobId): ?ReviewJob
     {
         global $wpdb;
-        $row = $wpdb->get_row($wpdb->prepare('SELECT * FROM ' . $wpdb->prefix . 'kiln_cleanup_jobs WHERE id = %d', $jobId), ARRAY_A);
+        $row = $wpdb->get_row($wpdb->prepare('SELECT * FROM ' . $wpdb->prefix . 'kiln_cleanup_jobs WHERE id = %d AND type = %s', $jobId, 'review'), ARRAY_A);
+        return $this->hydrate($row);
+    }
+
+    public function listRecent(int $limit = 50): array
+    {
+        global $wpdb;
+        $limit = min(100, max(1, $limit));
+        $rows = $wpdb->get_results($wpdb->prepare('SELECT * FROM ' . $wpdb->prefix . 'kiln_cleanup_jobs WHERE type = %s ORDER BY id DESC LIMIT %d', 'review', $limit), ARRAY_A);
+        return array_values(array_filter(array_map(fn (array $row): ?ReviewJob => $this->hydrate($row), $rows)));
+    }
+
+    private function hydrate(mixed $row): ?ReviewJob
+    {
         if (! is_array($row)) {
             return null;
         }

@@ -19,9 +19,19 @@ final readonly class ReviewJobCommandService
         return $this->transition($state, JobState::Paused);
     }
 
+    public function prepare(JobState $state): JobState
+    {
+        return $this->transition($state, JobState::Ready);
+    }
+
     public function resume(JobState $state): JobState
     {
         return $this->transition($state, JobState::Ready);
+    }
+
+    public function start(JobState $state): JobState
+    {
+        return $this->transition($state, JobState::Running);
     }
 
     public function cancel(JobState $state): JobState

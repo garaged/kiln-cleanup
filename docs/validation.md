@@ -2,15 +2,16 @@
 
 ## Automated gates
 
-| Gate | M0 coverage |
+| Gate | M5 coverage |
 | --- | --- |
 | Composer metadata validation | Required in CI |
 | PHP 8.2 and 8.3 syntax checks | Required in CI |
 | Domain unit tests | Required in CI |
 | Docker Compose topology | Required in CI |
-| WordPress activation smoke test | M1, when a reproducible packaged vendor tree is added |
-| Large-volume interruption/retry test | C4, before background cleanup ships |
-| Quarantine/restore acceptance test | C3, before any user mutation ships |
+| WordPress activation/schema/review-job smoke test | Required in CI/container smoke |
+| Review-job interruption/retry test | Required before M5 merge; verifies idempotent candidates and cursor compare-and-set |
+| Large-volume interruption/retry test | M7, before background cleanup ships |
+| Quarantine/restore acceptance test | M6, before any user mutation ships |
 
 ## Non-negotiable release rule
 

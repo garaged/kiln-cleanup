@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace KilnCleanup;
 
 use KilnCleanup\Admin\DetectionPolicyPageController;
+use KilnCleanup\Admin\ReviewJobsPageController;
 use KilnCleanup\Admin\UserInventoryPageController;
 use KilnCleanup\Infrastructure\DatabaseSchema;
 use KilnCleanup\Support\Environment;
@@ -32,6 +33,7 @@ final class Plugin
         add_action('admin_menu', static function (): void {
             (new UserInventoryPageController())->register();
             (new DetectionPolicyPageController())->register();
+            (new ReviewJobsPageController())->register();
         });
     }
 

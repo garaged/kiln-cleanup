@@ -11,6 +11,8 @@ final readonly class CandidateSnapshot
         public int $jobId,
         public int $userId,
         public int $score,
+        public string $band,
+        public string $policyVersion,
         public array $reasonCodes,
     ) {
     }

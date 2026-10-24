@@ -19,22 +19,31 @@ final readonly class ReviewJobScanStep
     ) {
     }
 
-    /** Returns the next cursor only after every candidate write succeeds. */
-    public function run(ReviewJob $job, DetectionEngine $engine, DetectionPolicy $policy, InventoryFilter $filter, int $limit): ?int
+    /** Persists every candidate before returning cursor and count evidence. */
+    public function run(ReviewJob $job, DetectionEngine $engine, DetectionPolicy $policy, InventoryFilter $filter, int $limit): ReviewJobScanResult
     {
         $this->lifecycle->requiresBoundedBatch($limit);
         $page = $this->inventory->pageAfter($job->cursorUserId, $limit, $filter);
 
+        $inserted = 0;
         foreach ($page->records as $record) {
             $result = $engine->evaluate($record, $policy);
-            $this->candidates->insert(new CandidateSnapshot(
+            if ($this->candidates->insert(new CandidateSnapshot(
                 $job->id,
                 $record->id,
                 $result->score,
+                $result->band->value,
+                $policy->version,
                 array_map(static fn ($reason): string => $reason->ruleId, $result->reasons),
-            ));
+            ))) {
+                ++$inserted;
+            }
         }
 
-        return $page->records === [] ? null : $page->records[array_key_last($page->records)]->id;
+        return new ReviewJobScanResult(
+            $page->records === [] ? null : $page->records[array_key_last($page->records)]->id,
+            count($page->records),
+            $inserted,
+        );
     }
 }

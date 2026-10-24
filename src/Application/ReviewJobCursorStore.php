@@ -7,5 +7,5 @@ namespace KilnCleanup\Application;
 interface ReviewJobCursorStore
 {
     /** Advances only when the persisted cursor still equals expectedCursor. */
-    public function compareAndAdvance(int $jobId, int $expectedCursor, int $nextCursor): bool;
+    public function compareAndAdvance(int $jobId, int $expectedCursor, int $nextCursor, int $processedCount, int $insertedCandidateCount): bool;
 }

@@ -6,7 +6,7 @@ namespace KilnCleanup\Infrastructure;
 
 final class DatabaseSchema
 {
-    public const VERSION = '1';
+    public const VERSION = '2';
 
     public static function maybeUpgrade(): void
     {
@@ -47,6 +47,8 @@ final class DatabaseSchema
             job_id bigint(20) unsigned NOT NULL,
             user_id bigint(20) unsigned NOT NULL,
             score smallint(5) unsigned NOT NULL,
+            band varchar(16) NOT NULL,
+            policy_version varchar(64) NOT NULL,
             reasons longtext NOT NULL,
             state varchar(32) NOT NULL,
             created_at datetime NOT NULL,

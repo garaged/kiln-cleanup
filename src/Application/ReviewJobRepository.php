@@ -12,4 +12,7 @@ interface ReviewJobRepository
     public function create(array $policySnapshot, array $filterSnapshot, int $actorUserId): ReviewJob;
 
     public function get(int $jobId): ?ReviewJob;
+
+    /** @return list<ReviewJob> */
+    public function listRecent(int $limit = 50): array;
 }

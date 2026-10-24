@@ -5,9 +5,9 @@
 - [x] Bounded keyset scan step.
 - [x] Optimistic cursor progression after candidate persistence.
 - [x] Read-only pause/resume/cancel command contract.
-- [ ] Persist lifecycle transitions and audit receipts.
-- [ ] Automated persistence/integration tests.
-- [ ] Review-job admin UI and manual acceptance.
-- [ ] Hosted CI plus Rancher Desktop ARM64 acceptance.
+- [x] Persist lifecycle transitions and redacted audit receipts.
+- [x] Automated snapshot, lifecycle, idempotence, and cursor-count tests.
+- [x] Administrator-only review-job UI with nonce-protected controls.
+- [ ] Hosted CI and Rancher Desktop ARM64 manual acceptance.
 
 No M5 capability may modify a WordPress user, authentication, session, role, or content.
