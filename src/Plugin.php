@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace KilnCleanup;
 
+use KilnCleanup\Admin\DetectionPolicyPageController;
 use KilnCleanup\Admin\UserInventoryPageController;
 use KilnCleanup\Infrastructure\DatabaseSchema;
 use KilnCleanup\Support\Environment;
@@ -18,36 +19,26 @@ final class Plugin
         register_activation_hook($pluginFile, [self::class, 'activate']);
 
         add_action('admin_init', static function (): void {
-            $issue = Environment::compatibilityIssue(
-                self::MINIMUM_PHP_VERSION,
-                self::MINIMUM_WORDPRESS_VERSION,
-            );
-
+            $issue = Environment::compatibilityIssue(self::MINIMUM_PHP_VERSION, self::MINIMUM_WORDPRESS_VERSION);
             if ($issue !== null) {
                 add_action('admin_notices', static function () use ($issue): void {
-                    echo '<div class="notice notice-error"><p>'
-                        . esc_html($issue)
-                        . '</p></div>';
+                    echo '<div class="notice notice-error"><p>' . esc_html($issue) . '</p></div>';
                 });
             }
         });
 
         add_action('admin_menu', static function (): void {
             (new UserInventoryPageController())->register();
+            (new DetectionPolicyPageController())->register();
         });
     }
 
     public static function activate(): void
     {
-        $issue = Environment::compatibilityIssue(
-            self::MINIMUM_PHP_VERSION,
-            self::MINIMUM_WORDPRESS_VERSION,
-        );
-
+        $issue = Environment::compatibilityIssue(self::MINIMUM_PHP_VERSION, self::MINIMUM_WORDPRESS_VERSION);
         if ($issue !== null) {
             wp_die(esc_html($issue), esc_html__('Kiln Cleanup cannot be activated', 'kiln-cleanup'));
         }
-
         DatabaseSchema::install();
     }
 }
