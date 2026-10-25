@@ -40,4 +40,4 @@ For a large incident, workers will use keyset pagination and compact, idempotent
     composer test
     composer lint
 
-See the [M8 specification](openspec/specs/m8-permanent-deletion/spec.md), [manual acceptance](docs/manual-m8-permanent-deletion.md), and [roadmap](docs/roadmap.md).
+See the [M9 specification](openspec/specs/m9-prevention-release-hardening/spec.md), [manual acceptance](docs/manual-m9-prevention-release-hardening.md), [operations guide](docs/operations.md), and [roadmap](docs/roadmap.md).

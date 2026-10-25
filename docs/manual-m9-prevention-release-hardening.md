@@ -5,3 +5,4 @@
 3. Enable registration evidence, create one disposable user through WordPress, and export the audit CSV. Verify `registration_observed` identifies only the target ID and does not contain email, IP address, user-agent, password, or request payload. Disable evidence and repeat; no event should be added.
 4. Add a disposable local plugin/filter returning `true` from `kiln_cleanup_registration_rate_limited`. Verify registration is rejected before account creation. Remove the filter and verify Kiln itself imposes no rate threshold.
 5. Run `make release-package`, `make release-verify`, `make container-preflight`, and `make container-test`.
+6. Confirm the recovery and performance procedures in [operations](operations.md) match the target host’s supported WordPress/PHP/database baseline.
