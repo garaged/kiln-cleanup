@@ -38,6 +38,22 @@ final class WordPressPermanentDeletionGateway implements PermanentDeletionGatewa
     public function deleteAccountAndAuthoredContent(int $userId): void
     {
         require_once ABSPATH . 'wp-admin/includes/user.php';
+
+        $content = get_posts([
+            'author' => $userId,
+            'fields' => 'ids',
+            'numberposts' => -1,
+            'post_status' => 'any',
+            'post_type' => 'any',
+        ]);
+        foreach ($content as $contentId) {
+            if (get_post_type($contentId) === 'attachment') {
+                wp_delete_attachment($contentId, true);
+                continue;
+            }
+            wp_delete_post($contentId, true);
+        }
+
         if (wp_delete_user($userId) !== true) {
             throw new RuntimeException('WordPress did not delete the account and authored content.');
         }
