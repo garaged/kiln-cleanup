@@ -74,7 +74,7 @@ final class PreventionPageController
         wp_nonce_field(self::ACTION);
         echo '<input type="hidden" name="action" value="' . esc_attr(self::ACTION) . '"><input type="hidden" name="operation" value="evidence">';
         echo '<label><input type="checkbox" name="evidence_enabled" value="1"' . checked($evidenceEnabled, true, false) . '> ' . esc_html__('Record redacted registration audit events', 'kiln-cleanup') . '</label> ';
-        submit_button(__('Save evidence preference', 'secondary', 'submit', false);
+        submit_button(__('Save evidence preference', 'kiln-cleanup'), 'secondary', 'submit', false);
         echo '</form>';
         echo '<h2>' . esc_html__('Rate-control integration', 'kiln-cleanup') . '</h2><p><code>kiln_cleanup_registration_rate_limited</code> ' . esc_html__('is a local WordPress filter. Return true from another local plugin to reject a registration before account creation. Kiln sets no thresholds, collects no request data, and calls no external service.', 'kiln-cleanup') . '</p></div>';
     }
