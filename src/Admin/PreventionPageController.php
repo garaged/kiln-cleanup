@@ -64,7 +64,7 @@ final class PreventionPageController
             wp_nonce_field(self::ACTION);
             echo '<input type="hidden" name="action" value="' . esc_attr(self::ACTION) . '"><input type="hidden" name="operation" value="lockdown">';
             echo '<label for="lockdown-confirmation">' . esc_html__('Type LOCKDOWN REGISTRATION exactly:', 'kiln-cleanup') . '</label> <input id="lockdown-confirmation" name="confirmation" required autocomplete="off" placeholder="LOCKDOWN REGISTRATION"> ';
-            submit_button(__('Disable public registration', 'delete small', 'submit', false);
+            submit_button(__('Disable public registration', 'kiln-cleanup'), 'delete small', 'submit', false);
             echo '</form>';
         } else {
             echo '<p class="description">' . esc_html__('To enable it again, use WordPress Settings → General. Kiln does not silently re-open registration.', 'kiln-cleanup') . '</p>';
