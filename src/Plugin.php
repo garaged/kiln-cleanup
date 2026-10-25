@@ -9,6 +9,8 @@ use KilnCleanup\Admin\DetectionPolicyPageController;
 use KilnCleanup\Admin\ReviewJobsPageController;
 use KilnCleanup\Admin\QuarantinePageController;
 use KilnCleanup\Admin\PermanentDeletionPageController;
+use KilnCleanup\Admin\PreventionPageController;
+use KilnCleanup\Infrastructure\AuditRecorder;
 use KilnCleanup\Admin\UserInventoryPageController;
 use KilnCleanup\Infrastructure\DatabaseSchema;
 use KilnCleanup\Infrastructure\WordPressQuarantineAuthBlocker;
@@ -27,11 +29,24 @@ final class Plugin
         $reviewJobs = new ReviewJobsPageController();
         $quarantine = new QuarantinePageController();
         $deletion = new PermanentDeletionPageController();
+        $prevention = new PreventionPageController();
         add_action('admin_post_kiln_cleanup_review_job', [$reviewJobs, 'handlePost']);
         add_action('admin_post_kiln_cleanup_quarantine', [$quarantine, 'handlePost']);
         add_action('admin_post_kiln_cleanup_permanent_deletion', [$deletion, 'handlePost']);
         add_action('admin_post_kiln_cleanup_audit_export', [$deletion, 'exportAudit']);
+        add_action('admin_post_kiln_cleanup_prevention', [$prevention, 'handlePost']);
         add_filter('wp_authenticate_user', [(new WordPressQuarantineAuthBlocker()), 'block'], 10, 1);
+        add_filter('registration_errors', static function (\WP_Error $errors, string $sanitizedUserLogin, string $userEmail): \WP_Error {
+            if ((bool) apply_filters('kiln_cleanup_registration_rate_limited', false, $sanitizedUserLogin, $userEmail)) {
+                $errors->add('kiln_cleanup_registration_rate_limited', __('Registration is unavailable. Please try again later.', 'kiln-cleanup'));
+            }
+            return $errors;
+        }, 10, 3);
+        add_action('user_register', static function (int $userId): void {
+            if (get_option('kiln_cleanup_registration_evidence_enabled') === '1') {
+                (new AuditRecorder())->recordRegistrationObserved($userId);
+            }
+        });
         add_filter('cron_schedules', static function (array $schedules): array {
             $schedules['kiln_cleanup_minute'] = ['interval' => 60, 'display' => __('Every minute', 'kiln-cleanup')];
             return $schedules;
@@ -60,12 +75,13 @@ final class Plugin
             }
         });
 
-        add_action('admin_menu', static function () use ($reviewJobs, $quarantine, $deletion): void {
+        add_action('admin_menu', static function () use ($reviewJobs, $quarantine, $deletion, $prevention): void {
             (new UserInventoryPageController())->register();
             (new DetectionPolicyPageController())->register();
             $reviewJobs->register();
             $quarantine->register();
             $deletion->register();
+            $prevention->register();
         });
     }
 

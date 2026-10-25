@@ -4,7 +4,7 @@ A safety-first, self-hosted WordPress cleanup plugin for site owners who need to
 
 ## Status
 
-**M8 — explicit permanent deletion after a 30-day quarantine grace period.** Deletion remains per-account, administrator-confirmed, and unavailable on WordPress Multisite; bulk and automatic account action do not exist.
+**M9 — local prevention and release hardening.** Registration lockdown is explicit and reversible; optional registration evidence is redacted and disabled by default; no network identifiers, telemetry, or automatic account action exist.
 
 ## Product principles
 
@@ -25,6 +25,8 @@ Administrators can inspect users through **Tools → Kiln Cleanup** using a curs
 Review jobs may run one bounded batch through WordPress Cron or `wp kiln-cleanup review-jobs run`. Both paths only evaluate and persist review evidence; neither can quarantine or restore an account.
 
 **Tools → Kiln Cleanup Deletion** is a distinct irreversible command for actively quarantined accounts after 30 days. It shows an aggregate authored-content summary, requires `DELETE <account-id>`, and then deletes the account with that authored content through WordPress APIs. It has no reassignment, bulk, Cron, CLI, or Multisite path. Administrators can export the redacted Kiln audit ledger as CSV.
+
+**Tools → Kiln Cleanup Prevention** can explicitly disable WordPress public registration with `LOCKDOWN REGISTRATION`. It also controls opt-in local registration evidence, which records only target account IDs and event metadata. Existing local plugins may block registration using the `kiln_cleanup_registration_rate_limited` filter; Kiln has no built-in request tracking or rate threshold.
 
 ## Planned account-cleanup flow
 
