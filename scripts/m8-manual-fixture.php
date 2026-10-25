@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 use KilnCleanup\Application\QuarantineService;
 use KilnCleanup\Application\ReviewJobSnapshotCodec;
 use KilnCleanup\Detection\DetectionPolicy;
