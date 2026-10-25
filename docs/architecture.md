@@ -52,5 +52,5 @@ The Review Jobs page is administrator-only and every state-changing request carr
 - Deletion is a separate administrator-only page and POST action; no Cron, CLI, queue, or bulk path can invoke it.
 - A preflight rechecks the active quarantine record, source review-policy allowlist, account existence, 30-day grace deadline, and Multisite state immediately before deletion.
 - The only M8 content disposition is deletion with the account. Aggregate authored-content counts are recomputed for the preflight and not copied as raw content into the audit ledger.
-- Account and content removal uses `wp_delete_user()`; Kiln does not directly mutate WordPress user or content tables.
+- Account and content removal uses WordPress lifecycle APIs: authored posts and attachments are force-deleted, then `wp_delete_user()` removes the account. Kiln does not directly mutate WordPress user or content tables.
 - Multisite is rejected before preflight or mutation. A successful operation records only IDs, disposition, and aggregate content counts in the redacted audit ledger.
