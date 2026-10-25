@@ -46,3 +46,11 @@ The Review Jobs page is administrator-only and every state-changing request carr
 - Claims are compare-and-set updates and expire after interruption. The existing candidate-before-cursor ordering remains the resume guarantee.
 - WordPress Cron wakes the worker at most once per minute. WP-CLI invokes the same worker and constrains batch size/count.
 - Worker failure records a bounded error and transitions only the review job to `failed`; it never changes a WordPress account.
+
+## M8 permanent-deletion boundary
+
+- Deletion is a separate administrator-only page and POST action; no Cron, CLI, queue, or bulk path can invoke it.
+- A preflight rechecks the active quarantine record, source review-policy allowlist, account existence, 30-day grace deadline, and Multisite state immediately before deletion.
+- The only M8 content disposition is deletion with the account. Aggregate authored-content counts are recomputed for the preflight and not copied as raw content into the audit ledger.
+- Account and content removal uses `wp_delete_user()`; Kiln does not directly mutate WordPress user or content tables.
+- Multisite is rejected before preflight or mutation. A successful operation records only IDs, disposition, and aggregate content counts in the redacted audit ledger.

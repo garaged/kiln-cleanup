@@ -18,7 +18,17 @@ final class QuarantineAuditRecorder implements QuarantineAuditRecorderContract
         $this->record('account_restored', $sourceJobId, $userId, $actorUserId);
     }
 
-    private function record(string $eventType, int $jobId, int $userId, int $actorUserId): void
+    public function recordDeleted(int $sourceJobId, int $userId, int $actorUserId, array $contentCounts): void
+    {
+        $this->record('account_deleted', $sourceJobId, $userId, $actorUserId, [
+            'source' => 'administrator_confirmed_permanent_deletion',
+            'content_disposition' => 'delete_with_account',
+            'content_counts' => $contentCounts,
+        ]);
+    }
+
+    /** @param array<string,mixed> $context */
+    private function record(string $eventType, int $jobId, int $userId, int $actorUserId, array $context = []): void
     {
         global $wpdb;
         $wpdb->insert($wpdb->prefix . 'kiln_cleanup_audit_events', [
@@ -26,7 +36,7 @@ final class QuarantineAuditRecorder implements QuarantineAuditRecorderContract
             'job_id' => $jobId,
             'target_user_id' => $userId,
             'actor_user_id' => $actorUserId,
-            'context' => wp_json_encode(['source' => 'administrator_confirmed_quarantine'], JSON_THROW_ON_ERROR),
+            'context' => wp_json_encode($context ?: ['source' => 'administrator_confirmed_quarantine'], JSON_THROW_ON_ERROR),
             'occurred_at' => current_time('mysql', true),
         ]);
     }

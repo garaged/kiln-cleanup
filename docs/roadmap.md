@@ -23,8 +23,8 @@ This roadmap is the sequencing authority for Kiln Cleanup. Each milestone gets o
 | M4 | Merged | Read-only candidate review view | Candidate persistence or action |
 | M5 | Merged | Durable candidate snapshots and review jobs | Quarantine |
 | M6 | Merged | Reversible quarantine and restore | Permanent deletion |
-| M7 | In progress | Resumable background review execution and CLI | Bulk quarantine or deletion |
-| M8 | Planned | Explicit permanent deletion after grace period | Automatic deletion |
+| M7 | Merged | Resumable background review execution and CLI | Bulk quarantine or deletion |
+| M8 | In progress | Explicit permanent deletion after grace period | Automatic deletion |
 | M9 | Planned | Prevention controls and operational hardening | Third-party dependency |
 
 ## Definition of done for every milestone
@@ -67,7 +67,7 @@ Run large review jobs in bounded batches with durable cursors, exclusive claims,
 
 ### M8 — Permanent deletion
 
-After a configurable default 30-day quarantine grace period, expose a separate, confirmation-bound deletion workflow with authored-content disposition, Multisite safeguards, per-target preflight, and audit export.
+After a fixed 30-day quarantine grace period, expose a separate, confirmation-bound deletion workflow with authored-content disposition, Multisite safeguards, per-target preflight, and audit export. M8 deletes authored content with the account only after displaying aggregate counts; Multisite is rejected.
 
 **Acceptance:** deletion rejects stale/invalid previews, protected accounts, and accounts before grace expiry; content disposition is explicit.
 

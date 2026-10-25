@@ -4,7 +4,7 @@ A safety-first, self-hosted WordPress cleanup plugin for site owners who need to
 
 ## Status
 
-**M7 — resumable background review execution.** Quarantine remains reversible, per-account, and administrator-confirmed; bulk and automatic account action do not exist.
+**M8 — explicit permanent deletion after a 30-day quarantine grace period.** Deletion remains per-account, administrator-confirmed, and unavailable on WordPress Multisite; bulk and automatic account action do not exist.
 
 ## Product principles
 
@@ -24,6 +24,8 @@ Administrators can inspect users through **Tools → Kiln Cleanup** using a curs
 
 Review jobs may run one bounded batch through WordPress Cron or `wp kiln-cleanup review-jobs run`. Both paths only evaluate and persist review evidence; neither can quarantine or restore an account.
 
+**Tools → Kiln Cleanup Deletion** is a distinct irreversible command for actively quarantined accounts after 30 days. It shows an aggregate authored-content summary, requires `DELETE <account-id>`, and then deletes the account with that authored content through WordPress APIs. It has no reassignment, bulk, Cron, CLI, or Multisite path. Administrators can export the redacted Kiln audit ledger as CSV.
+
 ## Planned account-cleanup flow
 
 discover → classify → review → quarantine → grace period → permanent deletion
@@ -36,4 +38,4 @@ For a large incident, workers will use keyset pagination and compact, idempotent
     composer test
     composer lint
 
-See the [M6 specification](openspec/specs/m6-quarantine-restore/spec.md), [manual acceptance](docs/manual-m6-quarantine-restore.md), and [roadmap](docs/roadmap.md).
+See the [M8 specification](openspec/specs/m8-permanent-deletion/spec.md), [manual acceptance](docs/manual-m8-permanent-deletion.md), and [roadmap](docs/roadmap.md).
