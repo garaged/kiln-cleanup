@@ -124,11 +124,13 @@ final class ReviewJobsPageController
     private function renderJobs(): void
     {
         $jobs = (new WpdbReviewJobRepository())->listRecent();
-        echo '<h2>' . esc_html__('Recent jobs', 'kiln-cleanup') . '</h2><table class="widefat striped"><thead><tr><th>ID</th><th>State</th><th>Cursor</th><th>Policy version</th><th>Filter</th><th>Controls</th></tr></thead><tbody>';
+        echo '<h2>' . esc_html__('Recent jobs', 'kiln-cleanup') . '</h2><table class="widefat striped"><thead><tr><th>ID</th><th>State</th><th>Progress</th><th>Policy version</th><th>Filter</th><th>Controls</th></tr></thead><tbody>';
         foreach ($jobs as $job) {
             $filter = $job->filterSnapshot['registered_before'] ?? __('None', 'kiln-cleanup');
             $version = $job->policySnapshot['version'] ?? __('Unknown', 'kiln-cleanup');
-            echo '<tr><td>' . esc_html((string) $job->id) . '</td><td>' . esc_html($job->state->value) . '</td><td>' . esc_html((string) $job->cursorUserId) . '</td><td>' . esc_html((string) $version) . '</td><td>' . esc_html((string) ($filter ?: __('None', 'kiln-cleanup'))) . '</td><td>';
+            $progress = sprintf(__('Cursor %1$d; processed %2$d', 'kiln-cleanup'), $job->cursorUserId, $job->processedCandidates);
+            if ($job->lastError !== null) { $progress .= ' — ' . $job->lastError; }
+            echo '<tr><td>' . esc_html((string) $job->id) . '</td><td>' . esc_html($job->state->value) . '</td><td>' . esc_html($progress) . '</td><td>' . esc_html((string) $version) . '</td><td>' . esc_html((string) ($filter ?: __('None', 'kiln-cleanup'))) . '</td><td>';
             foreach ($this->operationsFor($job->state->value) as $operation => $label) {
                 $this->renderOperation($job->id, $operation, $label);
             }

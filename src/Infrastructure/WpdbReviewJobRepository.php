@@ -46,6 +46,15 @@ final class WpdbReviewJobRepository implements ReviewJobRepository
             return null;
         }
         $snapshot = json_decode((string) $row['policy_snapshot'], true, flags: JSON_THROW_ON_ERROR);
-        return new ReviewJob((int) $row['id'], JobState::from((string) $row['state']), $snapshot['policy'], $snapshot['filter'], (int) $row['cursor_user_id'], (int) $row['created_by']);
+        return new ReviewJob(
+            (int) $row['id'],
+            JobState::from((string) $row['state']),
+            $snapshot['policy'],
+            $snapshot['filter'],
+            (int) $row['cursor_user_id'],
+            (int) $row['created_by'],
+            (int) $row['processed_candidates'],
+            $row['last_error'] === null ? null : (string) $row['last_error'],
+        );
     }
 }

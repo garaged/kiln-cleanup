@@ -4,7 +4,7 @@ A safety-first, self-hosted WordPress cleanup plugin for site owners who need to
 
 ## Status
 
-**M6 — reversible, per-account quarantine and restore.** Permanent deletion, bulk action, and automatic action do not exist.
+**M7 — resumable background review execution.** Quarantine remains reversible, per-account, and administrator-confirmed; bulk and automatic account action do not exist.
 
 ## Product principles
 
@@ -21,6 +21,8 @@ A safety-first, self-hosted WordPress cleanup plugin for site owners who need to
 Administrators can inspect users through **Tools → Kiln Cleanup** using a cursor-based page (100 users per page) and an optional exact registration-date filter. **Tools → Kiln Cleanup Jobs** creates a durable review job whose policy and filter are immutable snapshots. A job runs one bounded, idempotent scan step at a time and stores review-only candidate evidence.
 
 **Tools → Kiln Cleanup Quarantine** provides a separate, per-account command for high-confidence review candidates. It requires a typed target-specific confirmation, re-checks the captured policy allowlist, captures the original access state, destroys sessions, blocks future authentication, and supports exact restore. It never deletes an account, content, or profile data.
+
+Review jobs may run one bounded batch through WordPress Cron or `wp kiln-cleanup review-jobs run`. Both paths only evaluate and persist review evidence; neither can quarantine or restore an account.
 
 ## Planned account-cleanup flow
 

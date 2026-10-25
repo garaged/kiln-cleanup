@@ -14,6 +14,8 @@ final readonly class ReviewJob
         public array $filterSnapshot,
         public int $cursorUserId,
         public int $createdBy,
+        public int $processedCandidates = 0,
+        public ?string $lastError = null,
     ) {
     }
 }

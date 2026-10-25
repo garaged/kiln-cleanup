@@ -80,26 +80,29 @@ final class QuarantinePageController
     {
         $candidates = (new WpdbQuarantineCandidateRepository())->listEligible(50);
         echo '<h2>' . esc_html__('Eligible review candidates', 'kiln-cleanup') . '</h2><p>' . esc_html__('Only high-confidence candidates are shown. A snapshot allowlist is checked again immediately before quarantine.', 'kiln-cleanup') . '</p>';
-        echo '<table class="widefat striped"><thead><tr><th>Review job</th><th>Account ID</th><th>Confirmation</th><th>Action</th></tr></thead><tbody>';
+        echo '<table class="widefat striped"><thead><tr><th>Review job</th><th>Account ID</th><th>Email</th><th>Confirmation</th><th>Action</th></tr></thead><tbody>';
         foreach ($candidates as $candidate) {
-            echo '<tr><td>' . esc_html((string) $candidate['job_id']) . '</td><td>' . esc_html((string) $candidate['user_id']) . '</td><td>';
+            $email = $candidate['email'] !== '' ? $candidate['email'] : __('Account no longer exists', 'kiln-cleanup');
+            echo '<tr><td>' . esc_html((string) $candidate['job_id']) . '</td><td>' . esc_html((string) $candidate['user_id']) . '</td><td>' . esc_html($email) . '</td><td>';
             $this->form($candidate['user_id'], 'quarantine', $candidate['job_id']);
             echo '</td><td>' . esc_html__('Type the required confirmation, then submit.', 'kiln-cleanup') . '</td></tr>';
         }
-        if ($candidates === []) { echo '<tr><td colspan="4">' . esc_html__('No eligible candidates exist in completed review snapshots.', 'kiln-cleanup') . '</td></tr>'; }
+        if ($candidates === []) { echo '<tr><td colspan="5">' . esc_html__('No eligible candidates exist in completed review snapshots.', 'kiln-cleanup') . '</td></tr>'; }
         echo '</tbody></table>';
     }
 
     private function renderActive(): void
     {
         $records = (new WpdbQuarantineRepository())->listActive(50);
-        echo '<h2>' . esc_html__('Active quarantines', 'kiln-cleanup') . '</h2><table class="widefat striped"><thead><tr><th>Account ID</th><th>Source job</th><th>Confirmation</th><th>Action</th></tr></thead><tbody>';
+        echo '<h2>' . esc_html__('Active quarantines', 'kiln-cleanup') . '</h2><table class="widefat striped"><thead><tr><th>Account ID</th><th>Email</th><th>Source job</th><th>Confirmation</th><th>Action</th></tr></thead><tbody>';
         foreach ($records as $record) {
-            echo '<tr><td>' . esc_html((string) $record->userId) . '</td><td>' . esc_html((string) $record->sourceJobId) . '</td><td>';
+            $user = get_user_by('id', $record->userId);
+            $email = $user instanceof \WP_User ? $user->user_email : __('Account no longer exists', 'kiln-cleanup');
+            echo '<tr><td>' . esc_html((string) $record->userId) . '</td><td>' . esc_html($email) . '</td><td>' . esc_html((string) $record->sourceJobId) . '</td><td>';
             $this->form($record->userId, 'restore');
             echo '</td><td>' . esc_html__('Restore the exact captured capabilities; prior sessions stay invalidated.', 'kiln-cleanup') . '</td></tr>';
         }
-        if ($records === []) { echo '<tr><td colspan="4">' . esc_html__('No accounts are actively quarantined.', 'kiln-cleanup') . '</td></tr>'; }
+        if ($records === []) { echo '<tr><td colspan="5">' . esc_html__('No accounts are actively quarantined.', 'kiln-cleanup') . '</td></tr>'; }
         echo '</tbody></table>';
     }
 
@@ -110,7 +113,7 @@ final class QuarantinePageController
         wp_nonce_field(self::ACTION);
         echo '<input type="hidden" name="action" value="' . esc_attr(self::ACTION) . '"><input type="hidden" name="operation" value="' . esc_attr($operation) . '"><input type="hidden" name="user_id" value="' . esc_attr((string) $userId) . '">';
         if ($jobId > 0) { echo '<input type="hidden" name="job_id" value="' . esc_attr((string) $jobId) . '">'; }
-        echo '<label class="screen-reader-text" for="confirmation-' . esc_attr($operation . '-' . $userId) . '">' . esc_html__('Required confirmation', 'kiln-cleanup') . '</label><input id="confirmation-' . esc_attr($operation . '-' . $userId) . '" name="confirmation" required placeholder="' . esc_attr($token) . '"> ';
+        echo '<label for="confirmation-' . esc_attr($operation . '-' . $userId) . '">' . esc_html(sprintf(__('Type %s exactly:', 'kiln-cleanup'), $token)) . '</label> <input id="confirmation-' . esc_attr($operation . '-' . $userId) . '" name="confirmation" required autocomplete="off" placeholder="' . esc_attr($token) . '"> ';
         submit_button(ucfirst($operation), 'secondary small', 'submit', false);
         echo '</form>';
     }
