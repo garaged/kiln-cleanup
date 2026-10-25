@@ -12,14 +12,14 @@ make container-preflight
 make container-manual-up
 ```
 
-1. Under **Tools → Kiln Cleanup Deletion**, identify an actively quarantined account under 30 days old. It must display its email, source review job, and authored-content summary, but no deletion button. If the target ID is not clear, list the active quarantine records on the disposable stack:
+1. Create a dedicated disposable fixture. It creates a subscriber, a completed high-confidence review candidate, and its active quarantine; it prints the resulting account ID and email:
 
    ```sh
-   docker compose -f docker-compose.test.yml run --rm --entrypoint=wp smoke eval 'global $wpdb; $rows = $wpdb->get_results("SELECT q.user_id, q.quarantined_at, u.user_email FROM {$wpdb->prefix}kiln_cleanup_quarantines q INNER JOIN {$wpdb->users} u ON u.ID = q.user_id WHERE q.state = \"quarantined\" ORDER BY q.id DESC", ARRAY_A); if ($rows === []) { throw new RuntimeException("No active quarantine record is available for deletion acceptance."); } foreach ($rows as $row) { printf("%d\\t%s\\t%s\\n", $row["user_id"], $row["quarantined_at"], $row["user_email"]); }' --allow-root
+   make container-manual-m8-fixture
    ```
 
-   Select one displayed ID and use that exact ID in both remaining commands.
-2. On the disposable stack only, create authored content for that same account (replace `<USER_ID>`):
+   Refresh **Tools → Kiln Cleanup Deletion**. The account displays its email, source review job, and authored-content summary, but has no deletion button.
+2. On the disposable stack only, create authored content for that same account (replace `<USER_ID>` with the printed fixture ID):
 
    ```sh
    docker compose -f docker-compose.test.yml run --rm --entrypoint=wp smoke post create --post_title='M8 deletion acceptance' --post_status=publish --post_author=<USER_ID> --porcelain --allow-root
