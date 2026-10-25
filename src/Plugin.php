@@ -8,6 +8,7 @@ use KilnCleanup\Application\BackgroundReviewJobWorkerFactory;
 use KilnCleanup\Admin\DetectionPolicyPageController;
 use KilnCleanup\Admin\ReviewJobsPageController;
 use KilnCleanup\Admin\QuarantinePageController;
+use KilnCleanup\Admin\PermanentDeletionPageController;
 use KilnCleanup\Admin\UserInventoryPageController;
 use KilnCleanup\Infrastructure\DatabaseSchema;
 use KilnCleanup\Infrastructure\WordPressQuarantineAuthBlocker;
@@ -25,8 +26,11 @@ final class Plugin
 
         $reviewJobs = new ReviewJobsPageController();
         $quarantine = new QuarantinePageController();
+        $deletion = new PermanentDeletionPageController();
         add_action('admin_post_kiln_cleanup_review_job', [$reviewJobs, 'handlePost']);
         add_action('admin_post_kiln_cleanup_quarantine', [$quarantine, 'handlePost']);
+        add_action('admin_post_kiln_cleanup_permanent_deletion', [$deletion, 'handlePost']);
+        add_action('admin_post_kiln_cleanup_audit_export', [$deletion, 'exportAudit']);
         add_filter('wp_authenticate_user', [(new WordPressQuarantineAuthBlocker()), 'block'], 10, 1);
         add_filter('cron_schedules', static function (array $schedules): array {
             $schedules['kiln_cleanup_minute'] = ['interval' => 60, 'display' => __('Every minute', 'kiln-cleanup')];
@@ -56,11 +60,12 @@ final class Plugin
             }
         });
 
-        add_action('admin_menu', static function () use ($reviewJobs, $quarantine): void {
+        add_action('admin_menu', static function () use ($reviewJobs, $quarantine, $deletion): void {
             (new UserInventoryPageController())->register();
             (new DetectionPolicyPageController())->register();
             $reviewJobs->register();
             $quarantine->register();
+            $deletion->register();
         });
     }
 

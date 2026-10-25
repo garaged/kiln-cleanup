@@ -13,6 +13,7 @@ final readonly class QuarantineRecord
         public string $state,
         public array $originalCapabilities,
         public int $originalUserLevel,
+        public \DateTimeImmutable $quarantinedAt,
     ) {
     }
 

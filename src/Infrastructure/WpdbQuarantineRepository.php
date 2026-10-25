@@ -62,6 +62,7 @@ final class WpdbQuarantineRepository implements QuarantineRepository
             (string) $row['state'],
             json_decode((string) $row['original_capabilities'], true, flags: JSON_THROW_ON_ERROR),
             (int) $row['original_user_level'],
+            new \DateTimeImmutable((string) $row['quarantined_at']),
         );
     }
 }
