@@ -33,4 +33,33 @@ final class AuditRecorder
             'occurred_at' => current_time('mysql', true),
         ]);
     }
+
+    public function recordRegistrationLockdown(int $actorUserId): void
+    {
+        $this->record('public_registration_disabled', null, $actorUserId, ['source' => 'administrator_confirmed_lockdown']);
+    }
+
+    public function recordRegistrationEvidenceSetting(bool $enabled, int $actorUserId): void
+    {
+        $this->record('registration_evidence_setting_changed', null, $actorUserId, ['enabled' => $enabled]);
+    }
+
+    public function recordRegistrationObserved(int $userId): void
+    {
+        $this->record('registration_observed', $userId, 0, ['source' => 'wordpress_user_register', 'network_identifiers_retained' => false]);
+    }
+
+    /** @param array<string,scalar|null> $context */
+    private function record(string $eventType, ?int $targetUserId, int $actorUserId, array $context): void
+    {
+        global $wpdb;
+        $wpdb->insert($wpdb->prefix . 'kiln_cleanup_audit_events', [
+            'event_type' => $eventType,
+            'job_id' => null,
+            'target_user_id' => $targetUserId,
+            'actor_user_id' => $actorUserId,
+            'context' => wp_json_encode($context, JSON_THROW_ON_ERROR),
+            'occurred_at' => current_time('mysql', true),
+        ]);
+    }
 }

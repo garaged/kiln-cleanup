@@ -24,8 +24,8 @@ This roadmap is the sequencing authority for Kiln Cleanup. Each milestone gets o
 | M5 | Merged | Durable candidate snapshots and review jobs | Quarantine |
 | M6 | Merged | Reversible quarantine and restore | Permanent deletion |
 | M7 | Merged | Resumable background review execution and CLI | Bulk quarantine or deletion |
-| M8 | In progress | Explicit permanent deletion after grace period | Automatic deletion |
-| M9 | Planned | Prevention controls and operational hardening | Third-party dependency |
+| M8 | Merged | Explicit permanent deletion after grace period | Automatic deletion |
+| M9 | In progress | Prevention controls and operational hardening | Third-party dependency |
 
 ## Definition of done for every milestone
 

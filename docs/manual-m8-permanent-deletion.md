@@ -12,8 +12,14 @@ make container-preflight
 make container-manual-up
 ```
 
-1. Under **Tools → Kiln Cleanup Deletion**, verify that an actively quarantined account under 30 days old displays its email, source review job, and authored-content summary, but has no deletion button.
-2. On the disposable stack only, create authored content for that account (replace `<USER_ID>`):
+1. Create a dedicated disposable fixture. It creates a subscriber, a completed high-confidence review candidate, and its active quarantine; it prints the resulting account ID and email:
+
+   ```sh
+   make container-manual-m8-fixture
+   ```
+
+   Refresh **Tools → Kiln Cleanup Deletion**. The account displays its email, source review job, and authored-content summary, but has no deletion button.
+2. On the disposable stack only, create authored content for that same account (replace `<USER_ID>` with the printed fixture ID):
 
    ```sh
    docker compose -f docker-compose.test.yml run --rm --entrypoint=wp smoke post create --post_title='M8 deletion acceptance' --post_status=publish --post_author=<USER_ID> --porcelain --allow-root
@@ -22,8 +28,10 @@ make container-manual-up
 3. On the disposable stack only, age that same active quarantine beyond 30 days, then refresh the page:
 
    ```sh
-   docker compose -f docker-compose.test.yml run --rm --entrypoint=wp smoke eval 'global $wpdb; $userId = (int) $argv[1]; $updated = $wpdb->update($wpdb->prefix . "kiln_cleanup_quarantines", ["quarantined_at" => gmdate("Y-m-d H:i:s", time() - 31 * DAY_IN_SECONDS)], ["user_id" => $userId, "state" => "quarantined"]); if ($updated !== 1) { throw new RuntimeException("Expected one active quarantine to be aged."); }' <USER_ID> --allow-root
+   docker compose -f docker-compose.test.yml run --rm --entrypoint=wp smoke eval 'global $wpdb; $userId = 123; $updated = $wpdb->update($wpdb->prefix . "kiln_cleanup_quarantines", ["quarantined_at" => gmdate("Y-m-d H:i:s", time() - 31 * DAY_IN_SECONDS)], ["user_id" => $userId, "state" => "quarantined"]); if ($updated !== 1) { throw new RuntimeException("Expected one active quarantine to be aged."); }' --allow-root
    ```
+
+   Replace `123` with the target account ID. `wp eval` does not accept an extra positional argument, so the ID intentionally appears inside the disposable-stack command.
 
    Verify the summary still appears with an explicit `DELETE <account-id>` confirmation field and identifies the authored content before deletion.
 4. Submit an incorrect confirmation. Verify no user or content is deleted.
